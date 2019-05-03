@@ -10,7 +10,7 @@ module.exports = {
   },
   pages: {
     // 要新增 components 的話在下面新增一個 object
-    newPage: {
+    Scorer: {
       // 進入點
       entry: 'src/Page/Scorer.js',
       // 模板 html 檔 (放在 public 資料夾裡面的 html 在修改時才會 hot reload , 建議放在 public 裡面)
