@@ -21,5 +21,6 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  window.mountComponent = selector => mountVue(selector);
+  mountVue('#app');
+  // window.mountComponent = selector => mountVue(selector);
 }

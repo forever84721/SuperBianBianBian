@@ -1,30 +1,30 @@
 <template>
-  <div class="content" @click="Add()">
+  <div class="content" onselectstart="return false" @click="Add()" @contextmenu.prevent="Sub()">
     <div class="top">
-      <div v-for="i in 14" :key="i" class="dot" :class="{GetScore:HLed(i)}"></div>
+      <div v-for="i in 14" :key="i" class="dot" :class="{LedBright:HLed(i)}"></div>
     </div>
     <div class="center">
       <div class="LVerticalLine">
-        <div v-for="i in 69" :key="i" class="dot" :class="{GetScore:VLed(i)}"></div>
+        <div v-for="i in 70" :key="i" class="dot" :class="{LedBright:VLed(i)}"></div>
       </div>
       <div class="ScoreOuterFrame">
-        <div v-for="i in 15" :key="i" class="ScoreBox" :class="{GetScore:i<=Score}">
+        <div v-for="i in 15" :key="i" class="ScoreBox" :class="{ScoreBright:i<=Score}">
           <span class="Score">{{i}}</span>
         </div>
-        <div style="border-top:2px dashed #FF0000;height: 1px;overflow:hidden"></div>
-        <div v-for="i in 5" :key="i+15" class="ScoreBox" :class="{GetPassScore:(i+15)<=Score}">
+        <div class="PassLine"></div>
+        <div v-for="i in 5" :key="i+15" class="ScoreBox" :class="{PassScoreBright :(i+15)<=Score}">
           <span class="Score">{{i+15}}</span>
         </div>
       </div>
-      <div class="VerticalLine">
-        <div v-for="i in 69" :key="i" class="dot" :class="{GetScore:VLed(i)}"></div>
+      <div class="RVerticalLine">
+        <div v-for="i in 70" :key="i" class="dot" :class="{LedBright:VLed(i)}"></div>
       </div>
     </div>
     <div class="bottom">
-      <div v-for="i in 14" :key="i" class="dot" :class="{GetScore:HLed(i)}"></div>
+      <div v-for="i in 14" :key="i" class="dot" :class="{LedBright:HLed(i)}"></div>
     </div>
-    <!-- <audio id="audio" src="../../assets/NoPass.mp3" style="display:none" ref="aud" muted></audio>
-    <input id="btn" type="button" value="zxc" @click="play()">-->
+    <audio src="Pass.mp3" style="display:none" ref="Pass" muted></audio>
+    <audio src="NoPass.mp3" style="display:none" ref="NoPass" muted></audio>
   </div>
 </template>
 
@@ -34,19 +34,66 @@ export default {
   data() {
     return {
       Score: 0,
-      k: 0
+      EnableLED: false,
+      H: "11111001111100",
+      V:
+        "1111100111110011111001111100111110011111001111100111110011111001111100"
     };
   },
   methods: {
     Add() {
       if (this.Score < 20) {
         this.Score++;
+        if (this.Score === 1) {
+          setTimeout(() => {
+            try {
+              if (this.Score < 16) {
+                var audio = this.$refs.NoPass;
+                audio.play();
+              }
+            } catch (ex) {
+              alert(ex);
+            }
+          }, 5000);
+        }
         if (this.Score === 16) {
+          try {
+            var NoPassaudio = this.$refs.NoPass;
+            NoPassaudio.pause();
+            NoPassaudio.currentTime = 0;
+            var Passaudio = this.$refs.Pass;
+            Passaudio.play();
+            // audio.cloneNode().play();
+          } catch (ex) {
+            alert(ex);
+          }
+          this.EnableLED = true;
           setInterval(() => {
             this.Pass();
-          }, 100);
+          }, 50);
         }
       }
+    },
+    Sub() {
+      if (this.Score > 0) {
+        this.Score--;
+        if (this.Score == 15) {
+          try {
+            var Passaudio = this.$refs.Pass;
+            Passaudio.pause();
+            Passaudio.currentTime = 0;
+            var NoPassaudio = this.$refs.NoPass;
+            NoPassaudio.play();
+          } catch (ex) {
+            alert(ex);
+          }
+          this.EnableLED = false;
+        }
+      }
+    },
+    Reset() {
+      this.Score = 0;
+      this.EnableLED = false;
     },
     keyFunction() {
       if (event.keyCode == 32) {
@@ -55,50 +102,26 @@ export default {
       }
     },
     Pass() {
-      this.k++;
-      console.log(1);
+      // debugger;
+      this.H =
+        this.H.substr(this.H.length - 1, 1) +
+        this.H.substr(0, this.H.length - 1);
+      this.V =
+        this.V.substr(this.V.length - 1, 1) +
+        this.V.substr(0, this.V.length - 1);
     },
     HLed(i) {
-      if (this.k === 0) {
+      if (!this.EnableLED) {
         return false;
       }
-      var s = this.k % 14;
-      if (i <= s + 2 && i >= s - 2) {
-        return true;
-      } else {
-        return false;
-      }
-      // if (s < 5) {
-      // } else if (s > 10) {
-      // } else {
-      //   return i - s < 5;
-      // }
+      return this.H.split("")[i - 1] == "1" ? true : false;
     },
     VLed(i) {
-      if (this.k === 0) {
+      if (!this.EnableLED) {
         return false;
       }
-      var s = this.k % 69;
-      if (i <= s + 2 && i >= s - 2) {
-        return true;
-      } else {
-        return false;
-      }
-      // if (s < 5) {
-      // } else if (s > 10) {
-      // } else {
-      //   return i - s < 5;
-      // }
+      return this.V.split("")[i - 1] == "1" ? true : false;
     }
-    // play() {
-    //   try {
-    //     var audio = this.$refs.aud;
-    //     console.log(audio);
-    //     audio.cloneNode().play();
-    //   } catch (ex) {
-    //     alert(ex);
-    //   }
-    // },
   },
   computed: {},
   watch: {},
@@ -117,6 +140,7 @@ export default {
 }
 .top {
   display: flex;
+  z-index: 1;
 }
 .center {
   display: flex;
@@ -126,10 +150,11 @@ export default {
   flex-direction: row-reverse;
 }
 .LVerticalLine {
+  z-index: 1;
   display: flex;
   flex-direction: column-reverse;
 }
-.VerticalLine {
+.RVerticalLine {
   display: flex;
   flex-direction: column;
 }
@@ -154,7 +179,7 @@ export default {
 .ScoreBox {
   background-color: rgb(132, 132, 142);
   width: 110px;
-  height: 30px;
+  height: 50px;
   margin: 2px auto 2px;
   border-radius: 140px / 120px;
   display: flex;
@@ -165,11 +190,23 @@ export default {
   font-size: 22px;
   margin: auto;
 }
-.GetScore {
+.ScoreBright {
   background-color: rgb(250, 250, 250);
+  box-shadow: 0px 0px 30px 5px rgba(250, 250, 250, 0.8);
 }
-.GetPassScore {
-  background-color: rgb(255, 89, 109);
+.PassLine {
+  z-index: 1;
+  border-top: 2px dashed #ff0000;
+  height: 1px;
+  overflow: hidden;
+  box-shadow: 0px 0px 35px 2px rgba(255, 0, 0, 0.8);
+}
+.LedBright {
+  background-color: rgb(250, 250, 250);
+  box-shadow: 0px 0px 30px 2px rgb(245, 231, 42);
+}
+.PassScoreBright {
+  background-color: rgb(250, 70, 70);
+  box-shadow: 0px 0px 20px 5px rgba(255, 120, 139, 0.8);
 }
 </style>
-
