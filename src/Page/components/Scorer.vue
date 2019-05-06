@@ -23,21 +23,25 @@
     <div class="bottom">
       <div v-for="i in 14" :key="i" class="dot" :class="{LedBright:HLed(i)}"></div>
     </div>
-    <audio src="Pass.mp3" style="display:none" ref="Pass" muted></audio>
-    <audio src="NoPass.mp3" style="display:none" ref="NoPass" muted></audio>
+    <audio :src="Passm" style="display:none" ref="Pass" muted></audio>
+    <audio :src="NoPassm" style="display:none" ref="NoPass" muted></audio>
   </div>
 </template>
 
 <script>
+let Pass = require("../../assets/Pass.mp3");
+let NoPass = require("../../assets/NoPass.mp3");
 export default {
-  props: [],
+  props: ["passledinterval"],
   data() {
     return {
       Score: 0,
-      EnableLED: false,
+      EnableLed: false,
       H: "11111001111100",
       V:
-        "1111100111110011111001111100111110011111001111100111110011111001111100"
+        "1111100111110011111001111100111110011111001111100111110011111001111100",
+      Passm: Pass,
+      NoPassm: NoPass
     };
   },
   methods: {
@@ -67,10 +71,10 @@ export default {
           } catch (ex) {
             alert(ex);
           }
-          this.EnableLED = true;
+          this.EnableLed = true;
           setInterval(() => {
             this.Pass();
-          }, 50);
+          }, this.passledinterval);
         }
       }
     },
@@ -87,13 +91,13 @@ export default {
           } catch (ex) {
             alert(ex);
           }
-          this.EnableLED = false;
+          this.EnableLed = false;
         }
       }
     },
     Reset() {
       this.Score = 0;
-      this.EnableLED = false;
+      this.EnableLed = false;
     },
     keyFunction() {
       if (event.keyCode == 32) {
@@ -111,13 +115,13 @@ export default {
         this.V.substr(0, this.V.length - 1);
     },
     HLed(i) {
-      if (!this.EnableLED) {
+      if (!this.EnableLed) {
         return false;
       }
       return this.H.split("")[i - 1] == "1" ? true : false;
     },
     VLed(i) {
-      if (!this.EnableLED) {
+      if (!this.EnableLed) {
         return false;
       }
       return this.V.split("")[i - 1] == "1" ? true : false;
@@ -179,9 +183,9 @@ export default {
 .ScoreBox {
   background-color: rgb(132, 132, 142);
   width: 110px;
-  height: 50px;
+  height: 60px;
   margin: 2px auto 2px;
-  border-radius: 140px / 120px;
+  border-radius: 20px;
   display: flex;
   justify-content: center;
   align-content: center;
