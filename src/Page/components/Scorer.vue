@@ -83,6 +83,10 @@ export default {
         this.Score--;
         if (this.Score == 15) {
           try {
+            var highestTimeoutId = setTimeout(";");
+            for (var i = 0; i < highestTimeoutId; i++) {
+              clearTimeout(i);
+            }
             var Passaudio = this.$refs.Pass;
             Passaudio.pause();
             Passaudio.currentTime = 0;
