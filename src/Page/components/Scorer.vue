@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { log } from "util";
 let Pass = require("../../assets/Pass.mp3");
 let NoPass = require("../../assets/NoPass.mp3");
 export default {
@@ -41,7 +42,8 @@ export default {
       V:
         "1111100111110011111001111100111110011111001111100111110011111001111100",
       Passm: Pass,
-      NoPassm: NoPass
+      NoPassm: NoPass,
+      IntervalId: 0
     };
   },
   methods: {
@@ -72,7 +74,7 @@ export default {
             alert(ex);
           }
           this.EnableLed = true;
-          setInterval(() => {
+          this.IntervalId = setInterval(() => {
             this.Pass();
           }, this.passledinterval);
         }
@@ -83,10 +85,11 @@ export default {
         this.Score--;
         if (this.Score == 15) {
           try {
-            var highestTimeoutId = setTimeout(";");
-            for (var i = 0; i < highestTimeoutId; i++) {
-              clearTimeout(i);
-            }
+            // var highestTimeoutId = setTimeout(";");
+            // for (var i = 0; i < highestTimeoutId; i++) {
+            //   clearTimeout(i);
+            // }
+            clearTimeout(this.IntervalId);
             var Passaudio = this.$refs.Pass;
             Passaudio.pause();
             Passaudio.currentTime = 0;
@@ -134,7 +137,8 @@ export default {
   computed: {},
   watch: {},
   created() {
-    document.onkeydown = this.keyFunction;
+    document.addEventListener("keydown", this.keyFunction);
+    // document.onkeydown = this.keyFunction;
   },
   mounted() {}
 };

@@ -19,11 +19,15 @@ module.exports = {
       filename: 'index.html',
       // html 頁面的 title , 開發時使用用來方便確認分頁
       title: 'Scorer'
-
       // ↓ 通常不用處理
       // 在這個頁面中包含的模組，預設情況下會包含
       // 提取出來的通用 chunk 和 vendor chunk。
       // chunks: ['chunk-vendors', 'chunk-common', 'index']
+    },
+    ScorerMultiple: {
+      entry: 'src/Page/Scorer.js',
+      template: './public/Multiple.html',
+      filename: 'Multiple.html',
     }
     // , ↓ 新components
   }
